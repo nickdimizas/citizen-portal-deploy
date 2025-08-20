@@ -54,8 +54,22 @@ This will start:
 
 ### 4. Seed the database with a default admin user
 
+After the containers are up and running, open a **new terminal** and navigate to the backend repo:
+
+```bash
+cd ../citizen-portal-backend
+```
+
+Run the following command to seed the database with a default admin user:
+
 ```bash
 npm run admin:seed:docker
+```
+
+This will execute inside the backend container:
+
+```bash
+docker exec -it citizen-backend node dist/scripts/seedAdmin.js
 ```
 
 Default credentials:
