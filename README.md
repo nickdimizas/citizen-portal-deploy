@@ -1,43 +1,73 @@
 # Citizen Portal Deploy Repo
 
-This repository contains the **production deployment setup** of the Citizen Portal App using Docker Compose.
+This repository contains the **deployment setup** for the full Citizen Portal App (frontend + backend + MongoDB).
 
-## Production Mode
+## Prerequisites
 
-### Prerequisites
-
+- Node.js 20.x (LTS) or 22.x (Current)
+- npm
 - Docker
 - Docker Compose
 
-### Build and Start Containers
+## Run in Production Mode (Full App)
 
-1. Clone all three repositories (**frontend**, **backend**, and **deploy**) into the **same parent folder**:
+### 1. Clone all repositories
 
-   ```bash
-   git clone <frontend-repo-url>
-   git clone <backend-repo-url>
-   git clone <deploy-repo-url>
-   cd <deploy-repo-folder>
-   ```
+Make sure all three repos are cloned into the same parent folder:
 
-2. Build and start containers:
+```
+citizen-portal-backend/
+citizen-portal-frontend/
+citizen-portal-deploy/
+```
 
-   ```bash
-   docker-compose up --build
-   ```
+### 2. Build the frontend and backend locally
 
-3. Seed the backend with a default admin user:
+Since the Dockerfiles copy the `dist/` folders, you need to build them first:
 
-   ```bash
-   npm run admin:seed:docker
-   ```
+```bash
+# Backend
+cd citizen-portal-backend
+npm install
+npm run build
 
-   - This runs: `docker exec -it citizen-backend node dist/scripts/seedAdmin.js`
-   - Default credentials: username: `admin` | password: `admin123!`
-   - You can change these credentials later in the app.
+# Frontend
+cd ../citizen-portal-frontend
+npm install
+npm run build
+```
 
-4. Access the app in your browser:
+### 3. Start the full stack with Docker Compose
 
-   ```
-   http://localhost:80 or http://localhost:8080
-   ```
+From the deploy repo:
+
+```bash
+cd ../citizen-portal-deploy
+docker compose up --build
+```
+
+This will start:
+
+- **MongoDB** (with persistent volume `mongodb_data`)
+- **Backend** (Node.js, served at port 5000)
+- **Frontend** (served by Nginx at port 80 or 5173 depending on config)
+
+### 4. Seed the database with a default admin user
+
+```bash
+npm run admin:seed:docker
+```
+
+Default credentials:
+
+- **username:** `admin`
+- **password:** `admin123!`
+
+You can change these credentials later inside the app.
+
+### 5. Access the app
+
+- Frontend → `http://localhost:5173`
+- Backend → `http://localhost:5000`
+
+You can now log in with the seeded admin account.
